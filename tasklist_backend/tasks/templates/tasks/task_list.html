@@ -1,0 +1,76 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Dashboard - Tasklist Django{% endblock %}
+
+{% block content %}
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.total }}</div>
+        <div class="stat-label">Total de Tarefas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.completed }}</div>
+        <div class="stat-label">Concluídas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.pending }}</div>
+        <div class="stat-label">Pendentes</div>
+    </div>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h2>📋 Minhas Tarefas</h2>
+    <div>
+        <a href="{% url 'tasks:task_new' %}" class="btn">➕ Nova Tarefa</a>
+        
+        
+        <form method="get" style="display: inline-block; margin-left: 1rem;">
+            <select name="filter" onchange="this.form.submit()" style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border);">
+                <option value="all" {% if filter_type == 'all' %}selected{% endif %}>Todas</option>
+                <option value="pending" {% if filter_type == 'pending' %}selected{% endif %}>Pendentes</option>
+                <option value="completed" {% if filter_type == 'completed' %}selected{% endif %}>Concluídas</option>
+                <option value="high" {% if filter_type == 'high' %}selected{% endif %}>Alta Prioridade</option>
+            </select>
+        </form>
+    </div>
+</div>
+
+{% if tasks %}
+    {% for task in tasks %}
+    <div class="task-item {% if task.completed %}completed{% endif %}">
+        <div class="task-content">
+            <div class="task-title">{{ task.title }}</div>
+            {% if task.description %}
+                <div class="task-description">{{ task.description }}</div>
+            {% endif %}
+        </div>
+        <div style="display: flex; align-items: center;">
+            <span class="task-priority priority-{{ task.priority }}">
+                {% if task.priority == 'high' %}🔴 Alta
+                {% elif task.priority == 'medium' %}🟡 Média
+                {% else %}🟢 Baixa{% endif %}
+            </span>
+            <div>
+                <a href="{% url 'tasks:task_complete' task.id %}" class="btn {% if task.completed %}btn-secondary{% endif %}">
+                    {% if task.completed %}↶ Reabrir{% else %}✅ Concluir{% endif %}
+                </a>
+                <a href="{% url 'tasks:task_edit' task.id %}" class="btn btn-secondary">✏️ Editar</a>
+                <a href="{% url 'tasks:task_delete' task.id %}" class="btn btn-danger">🗑️ Excluir</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+        <p>📝 Nenhuma tarefa encontrada</p>
+        <p style="font-size: 0.875rem;">
+            {% if filter_type != 'all' %}
+                <a href="{% url 'tasks:task_list' %}">Ver todas as tarefas</a> ou 
+            {% endif %}
+            <a href="{% url 'tasks:task_new' %}">criar uma nova tarefa</a>!
+        </p>
+    </div>
+{% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - Tasklist</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>📝 Tasklist</h1>
+  </header>
+  
+  <nav class="main-nav">
+    <div class="nav-content">
+      <a href="index.html" class="nav-link">← Voltar ao Início</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Login Form -->
+    <div id="loginForm" class="login">
+      <h2>🔐 Entrar</h2>
+      <form onsubmit="handleLogin(event)">
+        <label>Email</label>
+        <input type="email" id="loginEmail" required placeholder="seu@email.com">
+        
+        <label>Senha</label>
+        <input type="password" id="loginPassword" required placeholder="Sua senha">
+        
+        <button type="submit">Entrar</button>
+        
+        <div class="text-center mt-2">
+          <p>Não tem conta? <a href="#" onclick="showRegisterForm()">Criar conta</a></p>
+          <p><a href="index.html">← Voltar</a></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Register Form (hidden initially) -->
+    <div id="registerForm" class="login hidden">
+      <h2>📝 Criar Conta</h2>
+      <form onsubmit="handleRegister(event)">
+        <label>Nome Completo</label>
+        <input type="text" id="registerName" required placeholder="Seu nome completo">
+        
+        <label>Email</label>
+        <input type="email" id="registerEmail" required placeholder="seu@email.com">
+        
+        <label>Senha</label>
+        <input type="password" id="registerPassword" required placeholder="Mínimo 6 caracteres" minlength="6">
+        
+        <label>Confirmar Senha</label>
+        <input type="password" id="registerPasswordConfirm" required placeholder="Confirme sua senha">
+        
+        <button type="submit">Criar Conta</button>
+        
+        <div class="text-center mt-2">
+          <p>Já tem conta? <a href="#" onclick="showLoginForm()">Fazer login</a></p>
+          <p><a href="index.html">← Voltar</a></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="login hidden">
+      <h2>✅ Sucesso!</h2>
+      <p class="text-center">Conta criada com sucesso!</p>
+      <button onclick="showLoginForm()">Fazer Login</button>
+      <div class="text-center mt-1">
+        <a href="index.html">← Voltar ao início</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2025 Tasklist App - Sistema de Autenticação</p>
+      <p>Versão 1.0 | HTML5 Semântico com NAV e FOOTER</p>
+      <div class="footer-links">
+        <a href="index.html">Início</a> | 
+        <a href="#ajuda">Ajuda</a> | 
+        <a href="#suporte">Suporte</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

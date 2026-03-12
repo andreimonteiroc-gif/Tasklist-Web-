@@ -1,0 +1,49 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Excluir Tarefa - Tasklist Django{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 3rem auto;">
+    <div style="background: var(--card); padding: 2rem; border-radius: 12px; border: 1px solid var(--error);">
+        <h2 style="color: var(--error); text-align: center;">🗑️ Confirmar Exclusão</h2>
+        
+        <div style="background: #fef2f2; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid var(--error);">
+            <h3 style="margin: 0 0 0.5rem; color: var(--error);">{{ task.title }}</h3>
+            {% if task.description %}
+                <p style="margin: 0; color: var(--text-muted);">{{ task.description }}</p>
+            {% endif %}
+            <p style="margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--text-muted);">
+                Prioridade: 
+                {% if task.priority == 'high' %}🔴 Alta
+                {% elif task.priority == 'medium' %}🟡 Média
+                {% else %}🟢 Baixa{% endif %}
+            </p>
+        </div>
+        
+        <p style="text-align: center; color: var(--text-muted); margin: 1.5rem 0;">
+            ⚠️ Esta ação não pode ser desfeita!
+        </p>
+        
+        <form method="post" style="display: flex; gap: 1rem; justify-content: center;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                🗑️ Sim, Excluir
+            </button>
+            <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">
+                ↩️ Cancelar
+            </a>
+        </form>
+        
+        <!-- Demonstração de Segurança -->
+        <div style="margin-top: 2rem; padding: 1rem; background: #f3f4f6; border-radius: 8px;">
+            <h4>🔒 Segurança Implementada:</h4>
+            <ul style="font-size: 0.875rem; color: var(--text-muted);">
+                <li><strong>CSRF Token:</strong> Proteção contra ataques</li>
+                <li><strong>Confirmação:</strong> Evita exclusões acidentais</li>
+                <li><strong>POST Method:</strong> Operação segura</li>
+                <li><strong>URL Amigável:</strong> /delete/{{ task.id }}/</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

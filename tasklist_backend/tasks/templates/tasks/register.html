@@ -1,0 +1,70 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Registrar - Tasklist Django{% endblock %}
+
+{% block content %}
+<div style="max-width: 420px; margin: 3rem auto;">
+    <div style="background: var(--card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border);">
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">📝 Criar Conta</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="name">Nome Completo</label>
+                <input type="text" 
+                       id="name" 
+                       name="name" 
+                       required 
+                       placeholder="Seu nome completo">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" 
+                       id="email" 
+                       name="email" 
+                       required 
+                       placeholder="seu@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" 
+                       id="password" 
+                       name="password" 
+                       required 
+                       minlength="6"
+                       placeholder="Mínimo 6 caracteres">
+            </div>
+            
+            <div class="form-group">
+                <label for="password_confirm">Confirmar Senha</label>
+                <input type="password" 
+                       id="password_confirm" 
+                       name="password_confirm" 
+                       required 
+                       placeholder="Confirme sua senha">
+            </div>
+            
+            <button type="submit" class="btn" style="width: 100%;">Criar Conta</button>
+            
+            <div style="text-align: center; margin-top: 1rem;">
+                <p>Já tem conta? <a href="{% url 'tasks:user_login' %}">Fazer login</a></p>
+                <p><a href="{% url 'tasks:task_list' %}">← Voltar</a></p>
+            </div>
+        </form>
+        
+        <!-- Demonstração de Validações -->
+        <div style="margin-top: 2rem; padding: 1rem; background: #ecfdf5; border-radius: 8px;">
+            <h4>✅ Validações Server-Side:</h4>
+            <ul style="font-size: 0.875rem; color: var(--text-muted);">
+                <li>Nome: mínimo 2 caracteres</li>
+                <li>Email: formato válido e único</li>
+                <li>Senha: mínimo 6 caracteres</li>
+                <li>Confirmação: deve coincidir</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

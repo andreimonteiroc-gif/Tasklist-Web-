@@ -1,0 +1,47 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Login - Tasklist Django{% endblock %}
+
+{% block content %}
+<div style="max-width: 420px; margin: 3rem auto;">
+    <div style="background: var(--card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border);">
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">🔐 Login</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" 
+                       id="email" 
+                       name="email" 
+                       required 
+                       placeholder="seu@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" 
+                       id="password" 
+                       name="password" 
+                       required 
+                       placeholder="Sua senha">
+            </div>
+            
+            <button type="submit" class="btn" style="width: 100%;">Entrar</button>
+            
+            <div style="text-align: center; margin-top: 1rem;">
+                <p>Não tem conta? <a href="{% url 'tasks:user_register' %}">Criar conta</a></p>
+                <p><a href="{% url 'tasks:task_list' %}">← Voltar</a></p>
+            </div>
+        </form>
+        
+        <!-- Demonstração de Validação -->
+        <div style="margin-top: 2rem; padding: 1rem; background: #fef3c7; border-radius: 8px;">
+            <h4>🧪 Contas de Teste:</h4>
+            <p style="font-size: 0.875rem; margin: 0.5rem 0;"><strong>Admin:</strong> admin@tasklist.com / admin123</p>
+            <p style="font-size: 0.875rem; margin: 0.5rem 0;"><strong>User:</strong> user@tasklist.com / user123</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

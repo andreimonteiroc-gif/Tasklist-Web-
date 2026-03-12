@@ -1,0 +1,40 @@
+{
+  "name": "tasklist-web",
+  "version": "1.0.0",
+  "description": "Um gerenciador de tarefas moderno e completo desenvolvido com HTML, CSS e JavaScript puro",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx live-server --port=3000 --open=/index.html",
+    "build": "echo 'Este projeto usa HTML/CSS/JS puro - não precisa de build'",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": [
+    "tasklist",
+    "todo",
+    "task-manager",
+    "javascript",
+    "html",
+    "css",
+    "responsive",
+    "web-app"
+  ],
+  "author": "Andrei Monteiro",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "local"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

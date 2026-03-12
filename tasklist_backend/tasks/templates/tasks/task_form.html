@@ -1,0 +1,59 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}{{ action }} Tarefa - Tasklist Django{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <h2>{{ action }} Tarefa</h2>
+    
+    <form method="post" style="background: var(--card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border);">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="title">Título da Tarefa *</label>
+            <input type="text" 
+                   id="title" 
+                   name="title" 
+                   value="{{ task.title|default:'' }}" 
+                   required 
+                   placeholder="Digite o título da tarefa">
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea id="description" 
+                      name="description" 
+                      rows="4" 
+                      placeholder="Descreva os detalhes da tarefa...">{{ task.description|default:'' }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="priority">Prioridade</label>
+            <select id="priority" name="priority">
+                <option value="low" {% if task.priority == 'low' %}selected{% endif %}>🟢 Baixa</option>
+                <option value="medium" {% if task.priority == 'medium' or not task.priority %}selected{% endif %}>🟡 Média</option>
+                <option value="high" {% if task.priority == 'high' %}selected{% endif %}>🔴 Alta</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" class="btn">
+                {% if task %}✏️ Atualizar Tarefa{% else %}➕ Criar Tarefa{% endif %}
+            </button>
+            <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">↩️ Cancelar</a>
+        </div>
+    </form>
+    
+    <!-- Demonstração de Validação de Formulários -->
+    <div style="margin-top: 2rem; padding: 1rem; background: #f0f9ff; border-radius: 8px; border: 1px solid #bae6fd;">
+        <h4>✅ Validações Implementadas:</h4>
+        <ul style="font-size: 0.875rem; color: var(--text-muted);">
+            <li><strong>Título:</strong> Obrigatório, mínimo 3 caracteres</li>
+            <li><strong>Descrição:</strong> Opcional, mas limitada a 500 caracteres</li>
+            <li><strong>Prioridade:</strong> Deve ser low, medium ou high</li>
+            <li><strong>CSRF Token:</strong> Proteção contra ataques</li>
+            <li><strong>Server-side:</strong> Validação no backend Django</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

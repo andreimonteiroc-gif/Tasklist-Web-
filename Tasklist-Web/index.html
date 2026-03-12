@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tasklist - Gerenciador de Tarefas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>📝 Tasklist</h1>
+  </header>
+  
+  <nav class="main-nav">
+    <div class="nav-content">
+      <div class="user-info" id="userInfo" style="display: none;">
+        Olá, <span id="userName"></span>! 
+        <a href="#" onclick="logout()" style="color: var(--accent); margin-left: 1rem;">Sair</a>
+      </div>
+    </div>
+  </nav>
+  
+  <main>
+    <div id="welcomeScreen">
+      <div class="login">
+        <h2>🎯 Bem-vindo ao Tasklist</h2>
+        <p class="text-center mb-2">Organize suas tarefas de forma simples e eficiente</p>
+        
+        <div class="stats" style="margin: 2rem 0;">
+          <div class="stat-card">
+            <div class="stat-number">📋</div>
+            <div class="stat-label">Organize Tarefas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">⏰</div>
+            <div class="stat-label">Defina Prioridades</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">✅</div>
+            <div class="stat-label">Acompanhe Progresso</div>
+          </div>
+        </div>
+        
+        <button onclick="showLogin()" style="margin-bottom: 1rem;">Fazer Login</button>
+        <button onclick="showRegister()" class="btn-secondary">Criar Conta</button>
+      </div>
+    </div>
+
+    <!-- Dashboard (hidden initially) -->
+    <div id="dashboard" class="hidden">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number" id="totalTasks">0</div>
+          <div class="stat-label">Total de Tarefas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="completedTasks">0</div>
+          <div class="stat-label">Concluídas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="pendingTasks">0</div>
+          <div class="stat-label">Pendentes</div>
+        </div>
+      </div>
+
+      <div class="task-container">
+        <div class="task-form">
+          <h3>➕ Nova Tarefa</h3>
+          <form id="taskForm" onsubmit="addTask(event)">
+            <label>Título da Tarefa</label>
+            <input type="text" id="taskTitle" required placeholder="Ex: Estudar JavaScript">
+            
+            <label>Descrição</label>
+            <textarea id="taskDescription" rows="3" placeholder="Descreva os detalhes da tarefa..."></textarea>
+            
+            <label>Prioridade</label>
+            <select id="taskPriority" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px;">
+              <option value="low">🟢 Baixa</option>
+              <option value="medium" selected>🟡 Média</option>
+              <option value="high">🔴 Alta</option>
+            </select>
+            
+            <button type="submit">Adicionar Tarefa</button>
+          </form>
+        </div>
+
+        <div class="task-list">
+          <h3>📋 Minhas Tarefas</h3>
+          <div class="flex justify-between items-center mb-2">
+            <select id="filterTasks" onchange="filterTasks()" style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border);">
+              <option value="all">Todas</option>
+              <option value="pending">Pendentes</option>
+              <option value="completed">Concluídas</option>
+              <option value="high">Alta Prioridade</option>
+            </select>
+            <button onclick="clearCompleted()" class="btn-small btn-secondary">Limpar Concluídas</button>
+          </div>
+          <div id="tasksList"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2025 Tasklist App - Gerenciador de Tarefas</p>
+      <p>Versão 1.0 | Desenvolvido com HTML5, CSS3 e JavaScript</p>
+      <div class="footer-links">
+        <a href="#sobre">Sobre</a> | 
+        <a href="#privacidade">Privacidade</a> | 
+        <a href="#contato">Contato</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

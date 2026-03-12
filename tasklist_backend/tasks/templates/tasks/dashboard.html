@@ -1,0 +1,115 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Dashboard - Estatísticas Tasklist{% endblock %}
+
+{% block content %}
+<h2 style="text-align: center; margin-bottom: 2rem;">📊 Dashboard Avançado</h2>
+
+<!-- Estatísticas Principais -->
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.total }}</div>
+        <div class="stat-label">Total de Tarefas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.completed }}</div>
+        <div class="stat-label">Concluídas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.pending }}</div>
+        <div class="stat-label">Pendentes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.completion_rate }}%</div>
+        <div class="stat-label">Taxa de Conclusão</div>
+    </div>
+</div>
+
+<!-- Estatísticas por Prioridade -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+    <div style="background: var(--card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+        <h3>🎯 Tarefas por Prioridade</h3>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: #fecaca; border-radius: 6px;">
+                <span>🔴 Alta Prioridade</span>
+                <strong>{{ priority_stats.high }}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: #fed7aa; border-radius: 6px;">
+                <span>🟡 Média Prioridade</span>
+                <strong>{{ priority_stats.medium }}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: #dcfce7; border-radius: 6px;">
+                <span>🟢 Baixa Prioridade</span>
+                <strong>{{ priority_stats.low }}</strong>
+            </div>
+        </div>
+    </div>
+    
+    <div style="background: var(--card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+        <h3>⏰ Tarefas Recentes</h3>
+        {% for task in recent_tasks %}
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                <div>
+                    <div style="font-weight: 600;">{{ task.title }}</div>
+                    <div style="font-size: 0.875rem; color: var(--text-muted);">
+                        {% if task.priority == 'high' %}🔴{% elif task.priority == 'medium' %}🟡{% else %}🟢{% endif %}
+                        {{ task.priority|title }}
+                    </div>
+                </div>
+                <div>
+                    {% if task.completed %}
+                        <span style="color: var(--success);">✅</span>
+                    {% else %}
+                        <span style="color: var(--warning);">⏳</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Ações Rápidas -->
+<div style="background: var(--card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
+    <h3>⚡ Ações Rápidas</h3>
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+        <a href="{% url 'tasks:task_new' %}" class="btn">➕ Nova Tarefa</a>
+        <a href="{% url 'tasks:task_list' %}?filter=pending" class="btn btn-secondary">📋 Ver Pendentes</a>
+        <a href="{% url 'tasks:task_list' %}?filter=high" class="btn btn-secondary">🔴 Alta Prioridade</a>
+        <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">📊 Todas as Tarefas</a>
+    </div>
+</div>
+
+<!-- Informações Técnicas -->
+<div style="margin-top: 2rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border);">
+    <h4>🛠️ Informações Técnicas do Dashboard:</h4>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; font-size: 0.875rem; color: var(--text-muted);">
+        <div>
+            <strong>URLs Implementadas:</strong>
+            <ul style="margin: 0.5rem 0; padding-left: 1rem;">
+                <li>/dashboard/ (esta página)</li>
+                <li>/new/ (criar tarefa)</li>
+                <li>/edit/&lt;id&gt;/ (editar)</li>
+                <li>/delete/&lt;id&gt;/ (excluir)</li>
+            </ul>
+        </div>
+        <div>
+            <strong>Funcionalidades:</strong>
+            <ul style="margin: 0.5rem 0; padding-left: 1rem;">
+                <li>Cálculos em tempo real</li>
+                <li>Estatísticas por prioridade</li>
+                <li>Tarefas recentes</li>
+                <li>Ações rápidas</li>
+            </ul>
+        </div>
+        <div>
+            <strong>Tecnologias:</strong>
+            <ul style="margin: 0.5rem 0; padding-left: 1rem;">
+                <li>Django Templates</li>
+                <li>Context Variables</li>
+                <li>CSS Grid/Flexbox</li>
+                <li>URLs Nomeadas</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

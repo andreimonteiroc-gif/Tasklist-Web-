@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Tasklist - Backend Django{% endblock %}</title>
+    <style>
+        :root {
+          --bg: #f8fafc; --card: #ffffff; --accent: #4f46e5; --accent-hover: #4338ca;
+          --text: #0f172a; --text-muted: #64748b; --border: #e2e8f0;
+          --success: #10b981; --error: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        header { background: linear-gradient(135deg, var(--accent), #6d28d9); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        header h1 { margin: 0; font-size: 1.75rem; font-weight: 700; text-align: center; }
+        nav.main-nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        nav .nav-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        nav .nav-link { color: var(--accent); text-decoration: none; font-weight: 500; margin: 0 1rem; transition: color 0.2s; }
+        nav .nav-link:hover { color: var(--accent-hover); }
+        main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: 700; color: var(--accent); margin: 0; }
+        .stat-label { color: var(--text-muted); font-size: 0.875rem; margin: 0.5rem 0 0; }
+        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem; margin: 0.5rem 0; background: var(--card); border-radius: 8px; border: 1px solid var(--border); }
+        .task-content { flex: 1; }
+        .task-title { font-weight: 600; margin: 0 0 0.25rem; }
+        .task-description { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
+        .task-priority { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500; margin-right: 0.5rem; }
+        .priority-high { background: #fecaca; color: #991b1b; }
+        .priority-medium { background: #fed7aa; color: #9a3412; }
+        .priority-low { background: #dcfce7; color: #166534; }
+        .btn { background: var(--accent); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.875rem; margin: 0.25rem; cursor: pointer; }
+        .btn:hover { background: var(--accent-hover); }
+        .btn-danger { background: var(--error); }
+        .btn-secondary { background: var(--border); color: var(--text); }
+        .form-group { margin: 1rem 0; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; }
+        .messages { margin-bottom: 1rem; }
+        .alert { padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; }
+        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .alert-error { background: #fecaca; color: #991b1b; border: 1px solid #fca5a5; }
+        footer { background: var(--card); border-top: 1px solid var(--border); padding: 2rem; margin-top: 3rem; text-align: center; }
+        footer p { margin: 0.5rem 0; color: var(--text-muted); font-size: 0.875rem; }
+        footer a { color: var(--accent); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📝 Tasklist Django</h1>
+    </header>
+    
+    <nav class="main-nav">
+        <div class="nav-content">
+            <div class="nav-links">
+                <a href="{% url 'tasks:task_list' %}" class="nav-link">Dashboard</a>
+                <a href="{% url 'tasks:task_new' %}" class="nav-link">Nova Tarefa</a>
+                <a href="{% url 'tasks:dashboard' %}" class="nav-link">Estatísticas</a>
+            </div>
+            <div class="user-info">
+                {% if request.session.user_name %}
+                    Olá, {{ request.session.user_name }}! 
+                    <a href="{% url 'tasks:user_logout' %}" class="nav-link">Sair</a>
+                {% else %}
+                    <a href="{% url 'tasks:user_login' %}" class="nav-link">Login</a>
+                    <a href="{% url 'tasks:user_register' %}" class="nav-link">Registrar</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Mensagens do Django -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Tasklist Django - Backend Completo</p>
+            <p>HTML5 Semântico + Django Framework + URLs Amigáveis</p>
+            <div class="footer-links">
+                <a href="{% url 'tasks:task_list' %}">Início</a> | 
+                <a href="{% url 'tasks:dashboard' %}">Dashboard</a> | 
+                <a href="/admin/">Admin</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
