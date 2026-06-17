@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estatísticas - tasklistMCZ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="brand-link" aria-label="Ir para a pagina inicial">
+      <img src="assets/logo-tasklistmcz.svg" alt="TaskListMCZ - Gerenciamento e Foco" class="brand-logo">
+    </a>
+  </header>
+  
+  <nav class="main-nav">
+    <div class="nav-content">
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Dashboard</a>
+        <a href="statistics.html" class="nav-link" style="color: var(--accent); font-weight: 600;">Estatísticas</a>
+        <a href="profile.html" class="nav-link">Perfil</a>
+        <a href="settings.html" class="nav-link">Configurações</a>
+      </div>
+      <div class="user-info" id="userInfo" style="display: none;">
+        <span id="userName"></span> 
+        <a href="#" onclick="logout()" style="color: var(--accent); margin-left: 1rem;">Sair</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div id="statsContent" class="hidden">
+      <h2>📊 Estatísticas de Tarefas</h2>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number" id="totalTasks">0</div>
+          <div class="stat-label">Total de Tarefas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="completedTasks">0</div>
+          <div class="stat-label">Concluídas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="pendingTasks">0</div>
+          <div class="stat-label">Pendentes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="completionRate">0%</div>
+          <div class="stat-label">Taxa de Conclusão</div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stats-section">
+          <h3>🎯 Tarefas por Prioridade</h3>
+          <div class="priority-stats">
+            <div class="priority-item">
+              <span class="priority-label">🔴 Alta Prioridade</span>
+              <div class="progress-bar">
+                <div class="progress-fill" id="highPriorityFill" style="background-color: var(--error);"></div>
+              </div>
+              <span class="priority-count" id="highPriorityCount">0</span>
+            </div>
+            <div class="priority-item">
+              <span class="priority-label">🟡 Média Prioridade</span>
+              <div class="progress-bar">
+                <div class="progress-fill" id="mediumPriorityFill" style="background-color: var(--warning);"></div>
+              </div>
+              <span class="priority-count" id="mediumPriorityCount">0</span>
+            </div>
+            <div class="priority-item">
+              <span class="priority-label">🟢 Baixa Prioridade</span>
+              <div class="progress-bar">
+                <div class="progress-fill" id="lowPriorityFill" style="background-color: var(--success);"></div>
+              </div>
+              <span class="priority-count" id="lowPriorityCount">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-section">
+          <h3>📈 Evolução Semanal</h3>
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>Dia</th>
+                <th>Criadas</th>
+                <th>Concluídas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Segunda</td>
+                <td id="monCreated">0</td>
+                <td id="monCompleted">0</td>
+              </tr>
+              <tr>
+                <td>Terça</td>
+                <td id="tueCreated">0</td>
+                <td id="tueCompleted">0</td>
+              </tr>
+              <tr>
+                <td>Quarta</td>
+                <td id="wedCreated">0</td>
+                <td id="wedCompleted">0</td>
+              </tr>
+              <tr>
+                <td>Quinta</td>
+                <td id="thuCreated">0</td>
+                <td id="thuCompleted">0</td>
+              </tr>
+              <tr>
+                <td>Sexta</td>
+                <td id="friCreated">0</td>
+                <td id="friCompleted">0</td>
+              </tr>
+              <tr>
+                <td>Sábado</td>
+                <td id="satCreated">0</td>
+                <td id="satCompleted">0</td>
+              </tr>
+              <tr>
+                <td>Domingo</td>
+                <td id="sunCreated">0</td>
+                <td id="sunCompleted">0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <h3>📋 Últimas Tarefas Concluídas</h3>
+        <div id="recentCompleted" class="recent-list"></div>
+      </div>
+
+      <div style="margin-top: 2rem; padding: 1rem; background: var(--border); border-radius: 8px; text-align: center;">
+        <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">
+          💡 Dica: Continue completando tarefas para melhorar suas estatísticas!
+        </p>
+      </div>
+    </div>
+
+    <!-- Redirect if not logged in -->
+    <div id="notLoggedIn" class="login">
+      <h2>⚠️ Acesso Necessário</h2>
+      <p class="text-center">Você precisa estar logado para visualizar suas estatísticas.</p>
+      <button onclick="window.location.href='login.html'">Fazer Login</button>
+      <div class="text-center mt-1">
+        <a href="index.html">← Voltar ao Início</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2025 tasklistMCZ App - Gerenciador de Tarefas</p>
+      <div class="footer-links">
+        <a href="index.html">Início</a> | 
+        <a href="statistics.html">Estatísticas</a> | 
+        <a href="profile.html">Perfil</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Statistics page specific functions
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUserSession();
+      if (currentUser) {
+        displayStatistics();
+      } else {
+        document.getElementById('statsContent').classList.add('hidden');
+        document.getElementById('notLoggedIn').classList.remove('hidden');
+      }
+    });
+
+    function displayStatistics() {
+      const statsContent = document.getElementById('statsContent');
+      const notLoggedIn = document.getElementById('notLoggedIn');
+      
+      statsContent.classList.remove('hidden');
+      notLoggedIn.classList.add('hidden');
+      
+      document.getElementById('userInfo').style.display = 'block';
+      document.getElementById('userName').textContent = currentUser.name || currentUser.username || 'Usuário';
+      
+      // Carrega tarefas da API e atualiza estatísticas
+      loadStatisticsTasks();
+    }
+
+    function loadStatisticsTasks() {
+      const username = localStorage.getItem('tasklistUsername');
+      const password = localStorage.getItem('tasklistPassword');
+
+      if (!username || !password) {
+        calculateStatistics([]);
+        return;
+      }
+
+      fetch(`${API_URL}/tasks/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${btoa(username + ':' + password)}`
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro ao carregar estatísticas da API');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const apiTasks = Array.isArray(data) ? data : (data.results || []);
+        calculateStatistics(apiTasks);
+      })
+      .catch(() => {
+        // Fallback para dados locais, se existirem
+        const fallback = JSON.parse(localStorage.getItem('tasklistTasks') || '[]');
+        calculateStatistics(fallback);
+      });
+    }
+
+    function calculateStatistics(tasks) {
+      const completed = tasks.filter(t => t.completed).length;
+      const pending = tasks.length - completed;
+      const completion = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+      
+      // Update main stats
+      document.getElementById('totalTasks').textContent = tasks.length;
+      document.getElementById('completedTasks').textContent = completed;
+      document.getElementById('pendingTasks').textContent = pending;
+      document.getElementById('completionRate').textContent = completion + '%';
+      
+      // Count by priority
+      const highPriority = tasks.filter(t => t.priority === 'high').length;
+      const mediumPriority = tasks.filter(t => t.priority === 'medium').length;
+      const lowPriority = tasks.filter(t => t.priority === 'low').length;
+      
+      document.getElementById('highPriorityCount').textContent = `${highPriority} tarefa(s)`;
+      document.getElementById('mediumPriorityCount').textContent = `${mediumPriority} tarefa(s)`;
+      document.getElementById('lowPriorityCount').textContent = `${lowPriority} tarefa(s)`;
+      
+      // Update progress bars
+      const totalForBar = highPriority + mediumPriority + lowPriority || 1;
+      document.getElementById('highPriorityFill').style.width = (highPriority / totalForBar * 100) + '%';
+      document.getElementById('mediumPriorityFill').style.width = (mediumPriority / totalForBar * 100) + '%';
+      document.getElementById('lowPriorityFill').style.width = (lowPriority / totalForBar * 100) + '%';
+
+      // Evolução semanal (segunda a domingo)
+      const createdByDay = [0, 0, 0, 0, 0, 0, 0];
+      const completedByDay = [0, 0, 0, 0, 0, 0, 0];
+
+      tasks.forEach(task => {
+        const createdAt = task.created_at || task.createdAt;
+        if (createdAt) {
+          const d = new Date(createdAt);
+          if (!Number.isNaN(d.getTime())) {
+            const idx = (d.getDay() + 6) % 7;
+            createdByDay[idx] += 1;
+          }
+        }
+
+        const completedAt = task.completed_at || task.completedAt;
+        if (completedAt) {
+          const d = new Date(completedAt);
+          if (!Number.isNaN(d.getTime())) {
+            const idx = (d.getDay() + 6) % 7;
+            completedByDay[idx] += 1;
+          }
+        }
+      });
+
+      const dayIds = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+      dayIds.forEach((prefix, i) => {
+        const createdCell = document.getElementById(`${prefix}Created`);
+        const completedCell = document.getElementById(`${prefix}Completed`);
+        if (createdCell) createdCell.textContent = createdByDay[i];
+        if (completedCell) completedCell.textContent = completedByDay[i];
+      });
+      
+      // Display recent completed tasks
+      const recentCompleted = tasks
+        .filter(t => t.completed)
+        .sort((a, b) => {
+          const aDate = new Date(a.completed_at || a.completedAt || 0).getTime();
+          const bDate = new Date(b.completed_at || b.completedAt || 0).getTime();
+          return bDate - aDate;
+        })
+        .slice(0, 5);
+      const recentList = document.getElementById('recentCompleted');
+      
+      if (recentCompleted.length > 0) {
+        recentList.innerHTML = recentCompleted.map(task => `
+          <div class="recent-item">
+            <span class="recent-title">✅ ${task.title}</span>
+          </div>
+        `).join('');
+      } else {
+        recentList.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Nenhuma tarefa concluída ainda. Comece a completar tarefas!</p>';
+      }
+    }
+  </script>
+</body>
+</html>
+

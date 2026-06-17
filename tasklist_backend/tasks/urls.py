@@ -1,9 +1,23 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
+from .api import TaskViewSet, UserViewSet, TaskAttachmentViewSet, UserProfileViewSet
+
+# Roteador para API REST
+router = DefaultRouter()
+router.register(r'users', UserViewSet, basename='user')
+router.register(r'tasks', TaskViewSet, basename='task')
+router.register(r'attachments', TaskAttachmentViewSet, basename='attachment')
+router.register(r'profiles', UserProfileViewSet, basename='profile')
 
 app_name = 'tasks'
 
 urlpatterns = [
+    # API REST v1
+    path('api/v1/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls')),
+    
+    # Views tradicionais (opcional, para compatibilidade)
     path('', views.task_list, name='task_list'),
     path('login/', views.user_login, name='user_login'),
     path('register/', views.user_register, name='user_register'),

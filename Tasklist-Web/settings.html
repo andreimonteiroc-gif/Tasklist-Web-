@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configurações - tasklistMCZ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="brand-link" aria-label="Ir para a pagina inicial">
+      <img src="assets/logo-tasklistmcz.svg" alt="TaskListMCZ - Gerenciamento e Foco" class="brand-logo">
+    </a>
+  </header>
+  
+  <nav class="main-nav">
+    <div class="nav-content">
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Dashboard</a>
+        <a href="statistics.html" class="nav-link">Estatísticas</a>
+        <a href="profile.html" class="nav-link">Perfil</a>
+        <a href="settings.html" class="nav-link" style="color: var(--accent); font-weight: 600;">Configurações</a>
+      </div>
+      <div class="user-info" id="userInfo" style="display: none;">
+        <span id="userName"></span> 
+        <a href="#" onclick="logout()" style="color: var(--accent); margin-left: 1rem;">Sair</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div id="settingsContent" class="hidden">
+      <h2>⚙️ Configurações</h2>
+
+      <div class="settings-tabs">
+        <button class="tab-button active" onclick="switchTab('general')">Geral</button>
+        <button class="tab-button" onclick="switchTab('privacy')">Privacidade</button>
+        <button class="tab-button" onclick="switchTab('notifications')">Notificações</button>
+        <button class="tab-button" onclick="switchTab('data')">Dados</button>
+      </div>
+
+      <!-- General Settings Tab -->
+      <div id="generalTab" class="settings-tab active">
+        <div class="settings-section">
+          <h3>🎨 Aparência</h3>
+          <form onsubmit="saveGeneralSettings(event)">
+            <label>Tema da Interface</label>
+            <select id="themeSelect" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px;">
+              <option value="light" selected>☀️ Claro</option>
+              <option value="dark">🌙 Escuro (em breve)</option>
+              <option value="auto">🔄 Auto (em breve)</option>
+            </select>
+
+            <label style="margin-top: 1rem;">Idioma</label>
+            <select id="languageSelect" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px;">
+              <option value="pt-BR" selected>🇧🇷 Português (Brasil)</option>
+              <option value="en">🇺🇸 English (em breve)</option>
+              <option value="es">🇪🇸 Español (em breve)</option>
+            </select>
+
+            <button type="submit" style="margin-top: 1rem;">Salvar Alterações</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Privacy Settings Tab -->
+      <div id="privacyTab" class="settings-tab hidden">
+        <div class="settings-section">
+          <h3>🔒 Segurança e Privacidade</h3>
+          <form onsubmit="savePrivacySettings(event)">
+            <div class="checkbox-group">
+              <label style="display: flex; align-items: center; gap: 0.75rem; font-weight: normal;">
+                <input type="checkbox" id="twoFactorAuth" disabled>
+                <span>Autenticação de Dois Fatores (em breve)</span>
+              </label>
+            </div>
+
+            <div class="checkbox-group">
+              <label style="display: flex; align-items: center; gap: 0.75rem; font-weight: normal; margin-top: 1rem;">
+                <input type="checkbox" id="sessionLogout" checked>
+                <span>Fazer logout automático após 30 minutos de inatividade</span>
+              </label>
+            </div>
+
+            <div class="checkbox-group">
+              <label style="display: flex; align-items: center; gap: 0.75rem; font-weight: normal; margin-top: 1rem;">
+                <input type="checkbox" id="shareData" checked>
+                <span>Permitir compartilhamento de dados de uso (anônimo)</span>
+              </label>
+            </div>
+
+            <h4 style="margin-top: 2rem;">Sessões Ativas</h4>
+            <div class="session-info">
+              <div class="session-item">
+                <span>💻 Navegador Firefox</span>
+                <span style="font-size: 0.9rem; color: var(--text-muted);">Agora</span>
+                <button type="button" onclick="removeSession()" class="btn-small btn-secondary">Remover</button>
+              </div>
+            </div>
+
+            <button type="submit" style="margin-top: 1rem;">Salvar Alterações</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Notifications Settings Tab -->
+      <div id="notificationsTab" class="settings-tab hidden">
+        <div class="settings-section">
+          <h3>🔔 Notificações</h3>
+          <form onsubmit="saveNotificationSettings(event)">
+            <div class="checkbox-group">
+              <label style="display: flex; align-items: center; gap: 0.75rem; font-weight: normal;">
+                <input type="checkbox" id="notifyTaskCreated" checked>
+                <span>Notificar quando uma tarefa é criada</span>
+              </label>
+            </div>
+
+            <div class="checkbox-group">
+              <label style="display: flex; align-items: center; gap: 0.75rem; font-weight: normal; margin-top: 1rem;">
+                <input type="checkbox" id="notifyTaskCompleted" checked>
+                <span>Notificar quando uma tarefa é concluída</span>
+              </label>
+            </div>
+
+            <div class="checkbox-group">
+              <label style="display: flex; align-items: center; gap: 0.75rem; font-weight: normal; margin-top: 1rem;">
+                <input type="checkbox" id="notifyHighPriority" checked>
+                <span>Alertar sobre tarefas de alta prioridade</span>
+              </label>
+            </div>
+
+            <div class="checkbox-group">
+              <label style="display: flex; align-items: center; gap: 0.75rem; font-weight: normal; margin-top: 1rem;">
+                <input type="checkbox" id="notifyEmail" checked>
+                <span>Enviar notificações por email</span>
+              </label>
+            </div>
+
+            <label style="margin-top: 2rem;">Frequência de Notificações</label>
+            <select id="notificationFrequency" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px;">
+              <option value="instant" selected>⚡ Instantânea</option>
+              <option value="daily">📅 Diária (resumo)</option>
+              <option value="weekly">📆 Semanal</option>
+            </select>
+
+            <button type="submit" style="margin-top: 1rem;">Salvar Alterações</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Data Settings Tab -->
+      <div id="dataTab" class="settings-tab hidden">
+        <div class="settings-section">
+          <h3>📦 Dados e Armazenamento</h3>
+          
+          <h4 style="margin-top: 1rem; margin-bottom: 1rem;">Exportar Dados</h4>
+          <p style="color: var(--text-muted); margin-bottom: 1rem;">Baixe uma cópia de todos os seus dados em formato JSON.</p>
+          <button onclick="exportData()" class="btn-secondary">📥 Exportar JSON</button>
+
+          <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Importar Dados</h4>
+          <p style="color: var(--text-muted); margin-bottom: 1rem;">Restaure seus dados de um arquivo JSON anterior.</p>
+          <input type="file" id="importFile" accept=".json" style="margin-bottom: 1rem;">
+          <button onclick="importData()" class="btn-secondary">📤 Importar JSON</button>
+
+          <h4 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--error);">⚠️ Zona de Perigo</h4>
+          <div style="padding: 1rem; background: var(--border); border-left: 4px solid var(--error); border-radius: 4px; margin-bottom: 1rem;">
+            <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">
+              Estas ações não podem ser desfeitas. Tenha cuidado!
+            </p>
+          </div>
+          <button onclick="clearAllTasks()" class="btn-secondary" style="background: var(--warning); color: white;">🗑️ Limpar Todas as Tarefas</button>
+          <button onclick="deleteAccount()" class="btn-secondary" style="background: var(--error); color: white; margin-left: 1rem;">❌ Deletar Conta</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Redirect if not logged in -->
+    <div id="notLoggedIn" class="login">
+      <h2>⚠️ Acesso Necessário</h2>
+      <p class="text-center">Você precisa estar logado para acessar as configurações.</p>
+      <button onclick="window.location.href='login.html'">Fazer Login</button>
+      <div class="text-center mt-1">
+        <a href="index.html">← Voltar ao Início</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2025 tasklistMCZ App - Gerenciador de Tarefas</p>
+      <div class="footer-links">
+        <a href="index.html">Início</a> | 
+        <a href="settings.html">Configurações</a> | 
+        <a href="profile.html">Perfil</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Settings page specific functions
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUserSession();
+      if (currentUser) {
+        displaySettings();
+      } else {
+        document.getElementById('settingsContent').classList.add('hidden');
+        document.getElementById('notLoggedIn').classList.remove('hidden');
+      }
+    });
+
+    function displaySettings() {
+      const settingsContent = document.getElementById('settingsContent');
+      const notLoggedIn = document.getElementById('notLoggedIn');
+      
+      settingsContent.classList.remove('hidden');
+      notLoggedIn.classList.add('hidden');
+      
+      document.getElementById('userInfo').style.display = 'block';
+      document.getElementById('userName').textContent = currentUser.name;
+    }
+
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Show selected tab
+      document.getElementById(tabName + 'Tab').classList.remove('hidden');
+      event.target.classList.add('active');
+    }
+
+    function saveGeneralSettings(event) {
+      event.preventDefault();
+      alert('Configurações gerais salvas com sucesso!');
+    }
+
+    function savePrivacySettings(event) {
+      event.preventDefault();
+      alert('Configurações de privacidade salvas com sucesso!');
+    }
+
+    function saveNotificationSettings(event) {
+      event.preventDefault();
+      alert('Configurações de notificação salvas com sucesso!');
+    }
+
+    function removeSession() {
+      alert('Sessão removida com sucesso!');
+    }
+
+    function exportData() {
+      const tasks = JSON.parse(localStorage.getItem('tasklistTasks') || '[]');
+      const userData = {
+        user: currentUser,
+        tasks: tasks,
+        exportedAt: new Date().toISOString()
+      };
+
+      const dataStr = JSON.stringify(userData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `tasklistMCZ-export-${new Date().getTime()}.json`;
+      link.click();
+    }
+
+    function importData() {
+      const fileInput = document.getElementById('importFile');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('Selecione um arquivo JSON para importar!');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const data = JSON.parse(event.target.result);
+          localStorage.setItem('tasklistTasks', JSON.stringify(data.tasks || []));
+          alert('Dados importados com sucesso!');
+          location.reload();
+        } catch (error) {
+          alert('Erro ao importar dados. Verifique o formato do arquivo.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function clearAllTasks() {
+      if (confirm('Tem certeza? Esta ação não pode ser desfeita!\n\nTodas as suas tarefas serão deletadas.')) {
+        localStorage.removeItem('tasklistTasks');
+        alert('Todas as tarefas foram deletadas!');
+        location.reload();
+      }
+    }
+
+    function deleteAccount() {
+      if (confirm('Tem certeza que deseja deletar sua conta?\n\nEsta ação não pode ser desfeita!')) {
+        if (confirm('Esta é a sua última chance! Todos os seus dados serão perdidos!')) {
+          const users = JSON.parse(localStorage.getItem('tasklistUsers') || '[]');
+          const filteredUsers = users.filter(u => u.id !== currentUser.id);
+          localStorage.setItem('tasklistUsers', JSON.stringify(filteredUsers));
+          localStorage.removeItem('tasklistCurrentUser');
+          localStorage.removeItem('tasklistTasks');
+          alert('Sua conta foi deletada!');
+          window.location.href = 'index.html';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
+

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Tasklist - Backend Django{% endblock %}</title>
+    <title>{% block title %}tasklistMCZ - Backend Django{% endblock %}</title>
     <style>
         :root {
           --bg: #f8fafc; --card: #ffffff; --accent: #4f46e5; --accent-hover: #4338ca;
@@ -49,7 +49,7 @@
 </head>
 <body>
     <header>
-        <h1>📝 Tasklist Django</h1>
+        <h1>📝 tasklistMCZ Django</h1>
     </header>
     
     <nav class="main-nav">
@@ -72,7 +72,7 @@
     </nav>
 
     <main>
-        <!-- Mensagens do Django -->
+       
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
@@ -89,7 +89,7 @@
 
     <footer>
         <div class="footer-content">
-            <p>&copy; 2025 Tasklist Django - Backend Completo</p>
+            <p>&copy; 2025 tasklistMCZ Django - Backend Completo</p>
             <p>HTML5 Semântico + Django Framework + URLs Amigáveis</p>
             <div class="footer-links">
                 <a href="{% url 'tasks:task_list' %}">Início</a> | 

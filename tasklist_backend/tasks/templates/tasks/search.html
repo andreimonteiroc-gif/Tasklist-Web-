@@ -1,0 +1,45 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Buscar Tarefas - tasklistMCZ Django{% endblock %}
+
+{% block content %}
+<h2>Buscar Tarefas</h2>
+
+<form method="get" action="{% url 'tasks:search' %}">
+    <div class="form-group">
+        <label for="q">Termo de busca</label>
+        <input
+            type="text"
+            id="q"
+            name="q"
+            value="{{ query }}"
+            placeholder="Digite título ou descrição"
+        >
+    </div>
+    <button type="submit" class="btn">Buscar</button>
+    <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">Voltar</a>
+</form>
+
+{% if query %}
+    <p><strong>{{ total_results }}</strong> resultado(s) para "{{ query }}".</p>
+{% endif %}
+
+{% if tasks %}
+    {% for task in tasks %}
+        <div class="task-item">
+            <div class="task-content">
+                <p class="task-title">{{ task.title }}</p>
+                <p class="task-description">{{ task.description|default:"Sem descrição" }}</p>
+            </div>
+            <div>
+                <a href="{% url 'tasks:task_edit' task.id %}" class="btn">Editar</a>
+            </div>
+        </div>
+    {% endfor %}
+{% elif query %}
+    <p>Nenhuma tarefa encontrada para este termo.</p>
+{% else %}
+    <p>Informe um termo para iniciar a busca.</p>
+{% endif %}
+{% endblock %}
+

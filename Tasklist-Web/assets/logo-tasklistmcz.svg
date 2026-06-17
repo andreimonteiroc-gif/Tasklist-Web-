@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="220" viewBox="0 0 1040 220" role="img" aria-label="TaskListMCZ - Gerenciamento e Foco">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="55%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f3f9e"/>
+      <stop offset="100%" stop-color="#0ea5a9"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(24,30)">
+    <rect x="0" y="88" width="36" height="64" rx="8" fill="url(#g1)" opacity="0.95"/>
+    <rect x="42" y="58" width="36" height="94" rx="8" fill="url(#g1)" opacity="0.92"/>
+    <rect x="84" y="32" width="36" height="120" rx="8" fill="url(#g1)" opacity="0.9"/>
+    <rect x="126" y="10" width="36" height="142" rx="8" fill="url(#g1)" opacity="0.88"/>
+
+    <path d="M-8 118 C30 112, 56 132, 84 146 C128 96, 170 54, 206 22" fill="none" stroke="url(#g2)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M44 118 L80 148 L143 68" fill="none" stroke="#0f4aa5" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g transform="translate(260,66)">
+    <text x="0" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="78" font-weight="800" letter-spacing="-1" fill="#0b376f">Tasklist</text>
+    <text x="320" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="78" font-weight="800" letter-spacing="-1" fill="#0ea5a9">MCZ</text>
+    <text x="4" y="106" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="500" fill="#5b6470">Gerenciamento e Foco</text>
+  </g>
+</svg>

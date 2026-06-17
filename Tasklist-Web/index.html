@@ -1,18 +1,26 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tasklist - Gerenciador de Tarefas</title>
+  <title>tasklistMCZ - Gerenciador de Tarefas</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1>📝 Tasklist</h1>
+    <a href="index.html" class="brand-link" aria-label="Ir para a pagina inicial">
+      <img src="assets/logo-tasklistmcz.svg" alt="TaskListMCZ - Gerenciamento e Foco" class="brand-logo">
+    </a>
   </header>
   
   <nav class="main-nav">
     <div class="nav-content">
+      <div class="nav-links" id="navLinks" style="display: none;">
+        <a href="index.html">Dashboard</a>
+        <a href="statistics.html">Estatísticas</a>
+        <a href="profile.html">Perfil</a>
+        <a href="settings.html">Configurações</a>
+      </div>
       <div class="user-info" id="userInfo" style="display: none;">
         Olá, <span id="userName"></span>! 
         <a href="#" onclick="logout()" style="color: var(--accent); margin-left: 1rem;">Sair</a>
@@ -23,7 +31,7 @@
   <main>
     <div id="welcomeScreen">
       <div class="login">
-        <h2>🎯 Bem-vindo ao Tasklist</h2>
+        <h2>🎯 Bem-vindo ao tasklistMCZ</h2>
         <p class="text-center mb-2">Organize suas tarefas de forma simples e eficiente</p>
         
         <div class="stats" style="margin: 2rem 0;">
@@ -103,7 +111,7 @@
 
   <footer>
     <div class="footer-content">
-      <p>&copy; 2025 Tasklist App - Gerenciador de Tarefas</p>
+      <p>&copy; 2025 tasklistMCZ App - Gerenciador de Tarefas</p>
       <p>Versão 1.0 | Desenvolvido com HTML5, CSS3 e JavaScript</p>
       <div class="footer-links">
         <a href="#sobre">Sobre</a> | 
@@ -116,3 +124,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perfil - tasklistMCZ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="brand-link" aria-label="Ir para a pagina inicial">
+      <img src="assets/logo-tasklistmcz.svg" alt="TaskListMCZ - Gerenciamento e Foco" class="brand-logo">
+    </a>
+  </header>
+  
+  <nav class="main-nav">
+    <div class="nav-content">
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Dashboard</a>
+        <a href="statistics.html" class="nav-link">Estatísticas</a>
+        <a href="profile.html" class="nav-link" style="color: var(--accent); font-weight: 600;">Perfil</a>
+        <a href="settings.html" class="nav-link">Configurações</a>
+      </div>
+      <div class="user-info" id="userInfo" style="display: none;">
+        <span id="userName"></span> 
+        <a href="#" onclick="logout()" style="color: var(--accent); margin-left: 1rem;">Sair</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div id="profileContent" class="hidden">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <span id="avatarInitial">U</span>
+        </div>
+        <div class="profile-info">
+          <h2 id="profileName">Seu Nome</h2>
+          <p id="profileEmail">seu@email.com</p>
+          <p id="joinDate">Membro desde: -</p>
+        </div>
+        <button onclick="editProfile()" class="btn-secondary">Editar Perfil</button>
+      </div>
+
+      <div class="profile-section">
+        <h3>🔒 Informações de Segurança</h3>
+        <div class="info-card">
+          <div class="info-row">
+            <span class="info-label">Email verificado:</span>
+            <span class="info-value" id="emailVerified">✅ Sim</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Senha:</span>
+            <span class="info-value">••••••••</span>
+            <button onclick="changePassword()" class="btn-small btn-secondary">Alterar</button>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Último acesso:</span>
+            <span class="info-value" id="lastLogin">Hoje</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <h3>🎯 Metas e Preferências</h3>
+        <form id="preferencesForm" onsubmit="savePreferences(event)">
+          <label>Prioridade Padrão para Novas Tarefas</label>
+          <select id="defaultPriority" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px;">
+            <option value="low">🟢 Baixa</option>
+            <option value="medium" selected>🟡 Média</option>
+            <option value="high">🔴 Alta</option>
+          </select>
+
+          <label style="margin-top: 1rem;">Notificações por Email</label>
+          <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+              <input type="checkbox" id="emailNotifications" checked> Tarefas próximas do vencimento
+            </label>
+          </div>
+
+          <label style="margin-top: 1rem;">Tema da Interface</label>
+          <select id="themePreference" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px;">
+            <option value="light" selected>☀️ Claro</option>
+            <option value="dark">🌙 Escuro (em breve)</option>
+            <option value="auto">🔄 Auto (em breve)</option>
+          </select>
+
+          <button type="submit" style="margin-top: 1.5rem;">Salvar Preferências</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Redirect if not logged in -->
+    <div id="notLoggedIn" class="login">
+      <h2>⚠️ Acesso Necessário</h2>
+      <p class="text-center">Você precisa estar logado para acessar seu perfil.</p>
+      <button onclick="window.location.href='login.html'">Fazer Login</button>
+      <div class="text-center mt-1">
+        <a href="index.html">← Voltar ao Início</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2025 tasklistMCZ App - Gerenciador de Tarefas</p>
+      <div class="footer-links">
+        <a href="index.html">Início</a> | 
+        <a href="profile.html">Perfil</a> | 
+        <a href="settings.html">Configurações</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Profile page specific functions
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUserSession();
+      if (currentUser) {
+        displayProfile();
+      } else {
+        document.getElementById('profileContent').classList.add('hidden');
+        document.getElementById('notLoggedIn').classList.remove('hidden');
+      }
+    });
+
+    function displayProfile() {
+      const profileContent = document.getElementById('profileContent');
+      const notLoggedIn = document.getElementById('notLoggedIn');
+      
+      profileContent.classList.remove('hidden');
+      notLoggedIn.classList.add('hidden');
+      
+      document.getElementById('userInfo').style.display = 'block';
+      document.getElementById('userName').textContent = currentUser.name || currentUser.username || 'Usuário';
+
+      loadProfileData();
+    }
+
+    function loadProfileData() {
+      const username = localStorage.getItem('tasklistUsername');
+      const password = localStorage.getItem('tasklistPassword');
+
+      if (!username || !password) {
+        return;
+      }
+
+      fetch(`${API_URL}/profiles/me/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${btoa(username + ':' + password)}`
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro ao carregar perfil');
+        }
+        return response.json();
+      })
+      .then(profile => {
+        const fullName = profile.full_name || currentUser.name || currentUser.username || 'Usuário';
+        const email = (profile.user && profile.user.email) || currentUser.email || '-';
+        const createdAt = profile.created_at;
+
+        document.getElementById('profileName').textContent = fullName;
+        document.getElementById('profileEmail').textContent = email;
+        document.getElementById('avatarInitial').textContent = fullName.charAt(0).toUpperCase();
+
+        if (createdAt) {
+          const joinDate = new Date(createdAt);
+          document.getElementById('joinDate').textContent = `Membro desde: ${joinDate.toLocaleDateString('pt-BR')}`;
+        } else {
+          document.getElementById('joinDate').textContent = 'Membro desde: -';
+        }
+      })
+      .catch(() => {
+        const fallbackName = currentUser.name || currentUser.username || 'Usuário';
+        document.getElementById('profileName').textContent = fallbackName;
+        document.getElementById('profileEmail').textContent = currentUser.email || '-';
+        document.getElementById('avatarInitial').textContent = fallbackName.charAt(0).toUpperCase();
+        document.getElementById('joinDate').textContent = 'Membro desde: -';
+      });
+    }
+
+    function editProfile() {
+      alert('Função de edição de perfil será implementada em breve!');
+    }
+
+    function changePassword() {
+      alert('Função de alteração de senha será implementada em breve!');
+    }
+
+    function savePreferences(event) {
+      event.preventDefault();
+      alert('Preferências salvas com sucesso!');
+    }
+  </script>
+</body>
+</html>
+

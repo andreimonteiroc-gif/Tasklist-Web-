@@ -1,12 +1,28 @@
+"""
+Views para gerenciamento de tarefas e autenticação de usuários.
+
+Este módulo contém as views principal da aplicação Tasklist, incluindo:
+- Autenticação (login, registro, logout)
+- CRUD de tarefas (criar, listar, editar, deletar)
+- Gestão de perfil do usuário
+- Dashboard com estatísticas
+- Busca de tarefas
+"""
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from datetime import datetime
 from .models import Task, UserProfile
+from .middleware import task_owner_required
 from django.db.models import Q
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 
 MOCK_TASKS = [
@@ -75,6 +91,21 @@ MOCK_USERS = [
 ]
 
 def task_list(request):
+    """
+    Lista todas as tarefas do usuário autenticado com filtros.
+    
+    Filtros disponíveis via GET:
+    - filter=all: todas as tarefas (padrão)
+    - filter=completed: tarefas concluídas
+    - filter=pending: tarefas pendentes
+    - filter=high: tarefas de alta prioridade
+    
+    Args:
+        request: HTTPRequest com usuário autenticado
+        
+    Returns:
+        HttpResponse: página com lista de tarefas e estatísticas
+    """
     if request.user.is_authenticated:
         tasks_queryset = Task.objects.filter(user=request.user)
         filter_type = request.GET.get('filter', 'all')
@@ -115,6 +146,16 @@ def task_list(request):
     return render(request, 'tasks/task_list.html', context)
 
 def user_login(request):
+    """
+    Autentica o usuário usando email e senha.
+    
+    POST:
+        - email: email do usuário
+        - password: senha do usuário
+        
+    Returns:
+        HttpResponse: redireciona para task_list se sucesso, mantém em login.html se erro
+    """
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -134,6 +175,24 @@ def user_login(request):
     return render(request, 'tasks/login.html')
 
 def user_register(request):
+    """
+    Registra um novo usuário na aplicação.
+    
+    Validações:
+    - Nome com mínimo 2 caracteres
+    - Email válido e único
+    - Senha com mínimo 6 caracteres
+    - Confirmação de senha deve bater
+    
+    POST:
+        - name: nome completo do usuário
+        - email: email do usuário
+        - password: senha
+        - password_confirm: confirmação de senha
+        
+    Returns:
+        HttpResponse: redireciona para login se sucesso, mantém em register.html se erro
+    """
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
@@ -207,7 +266,24 @@ def task_new(request):
 
 @login_required
 def task_edit(request, task_id):
-    task = get_object_or_404(Task, id=task_id, user=request.user)
+    """
+    Edita uma tarefa existente.
+    
+    Apenas o proprietário da tarefa pode editá-la.
+    
+    POST:
+        - title: novo título
+        - description: nova descrição
+        - priority: nova prioridade
+        
+    Returns:
+        HttpResponse: redireciona para task_list se sucesso, 403 se não autorizado
+    """
+    try:
+        task = get_object_or_404(Task, id=task_id, user=request.user)
+    except:
+        messages.error(request, 'Tarefa não encontrada.')
+        return redirect('tasks:task_list')
     
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -230,7 +306,24 @@ def task_edit(request, task_id):
 
 @login_required
 def task_delete(request, task_id):
-    task = get_object_or_404(Task, id=task_id, user=request.user)
+    """
+    Deleta uma tarefa existente.
+    
+    Apenas o proprietário da tarefa pode deletá-la.
+    Requer confirmação via POST.
+    
+    Args:
+        request: HTTPRequest com usuário autenticado
+        task_id: ID da tarefa a ser deletada
+        
+    Returns:
+        HttpResponse: redireciona para task_list após deleção confirmada
+    """
+    try:
+        task = get_object_or_404(Task, id=task_id, user=request.user)
+    except:
+        messages.error(request, 'Tarefa não encontrada.')
+        return redirect('tasks:task_list')
     
     if request.method == 'POST':
         try:
@@ -245,6 +338,19 @@ def task_delete(request, task_id):
 
 @login_required
 def task_complete(request, task_id):
+    """
+    Alterna o status de conclusão de uma tarefa.
+    
+    Se a tarefa estiver pendente, marca como concluída.
+    Se estiver concluída, marca como pendente.
+    
+    Args:
+        request: HTTPRequest com usuário autenticado
+        task_id: ID da tarefa
+        
+    Returns:
+        HttpResponse: redireciona para task_list
+    """
     task = get_object_or_404(Task, id=task_id, user=request.user)
     try:
         task.completed = not task.completed
@@ -258,6 +364,18 @@ def task_complete(request, task_id):
 
 @login_required
 def dashboard(request):
+    """
+    Exibe dashboard com estatísticas de tarefas do usuário.
+    
+    Mostra:
+    - Total de tarefas (concluídas, pendentes)
+    - Taxa de conclusão (%)
+    - Distribuição por prioridade
+    - Tarefas mais recentes
+    
+    Returns:
+        HttpResponse: página do dashboard com contexto de estatísticas
+    """
     # Estatísticas avançadas do banco de dados
     all_tasks = Task.objects.filter(user=request.user)
     total_tasks = all_tasks.count()
@@ -293,6 +411,19 @@ def home(request):
 
 @login_required  
 def profile(request):
+    """
+    Exibe e permite edição do perfil do usuário.
+    
+    GET:
+        - Mostra dados do perfil do usuário
+        
+    POST:
+        - full_name: novo nome completo
+        - Atualiza User e UserProfile
+        
+    Returns:
+        HttpResponse: página de perfil com dados do usuário
+    """
     try:
         user_profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
@@ -321,6 +452,15 @@ def profile(request):
 
 @login_required
 def search(request):
+    """
+    Busca tarefas do usuário por título ou descrição.
+    
+    GET:
+        - q: string de busca (case-insensitive)
+        
+    Returns:
+        HttpResponse: página com tarefas que match a query
+    """
     query = request.GET.get('q', '').strip()
     tasks = []
     if query:

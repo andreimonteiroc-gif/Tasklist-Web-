@@ -99,3 +99,48 @@ class UserProfile(models.Model):
         
     def __str__(self):
         return f"Perfil: {self.full_name}"
+
+
+class TaskAttachment(models.Model):
+    """Modelo para arquivos anexados a tarefas"""
+    
+    task = models.ForeignKey(
+        Task,
+        on_delete=models.CASCADE,
+        related_name='attachments',
+        verbose_name="Tarefa"
+    )
+    
+    file = models.FileField(
+        upload_to='task_attachments/%Y/%m/%d/',
+        verbose_name="Arquivo"
+    )
+    
+    file_name = models.CharField(
+        max_length=255,
+        verbose_name="Nome do Arquivo"
+    )
+    
+    file_size = models.IntegerField(
+        verbose_name="Tamanho (bytes)"
+    )
+    
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Enviado em"
+    )
+    
+    uploaded_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name="Enviado por"
+    )
+    
+    class Meta:
+        verbose_name = "Anexo de Tarefa"
+        verbose_name_plural = "Anexos de Tarefas"
+        ordering = ['-uploaded_at']
+        
+    def __str__(self):
+        return f"{self.file_name} - {self.task.title}"

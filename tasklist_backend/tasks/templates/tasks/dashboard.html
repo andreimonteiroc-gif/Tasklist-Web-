@@ -1,11 +1,11 @@
 {% extends 'tasks/base.html' %}
 
-{% block title %}Dashboard - Estatísticas Tasklist{% endblock %}
+{% block title %}Dashboard - Estatísticas tasklistMCZ{% endblock %}
 
 {% block content %}
 <h2 style="text-align: center; margin-bottom: 2rem;">📊 Dashboard Avançado</h2>
 
-<!-- Estatísticas Principais -->
+
 <div class="stats">
     <div class="stat-card">
         <div class="stat-number">{{ stats.total }}</div>
@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<!-- Estatísticas por Prioridade -->
+
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
     <div style="background: var(--card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
         <h3>🎯 Tarefas por Prioridade</h3>
@@ -68,7 +68,7 @@
     </div>
 </div>
 
-<!-- Ações Rápidas -->
+
 <div style="background: var(--card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
     <h3>⚡ Ações Rápidas</h3>
     <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
@@ -79,7 +79,7 @@
     </div>
 </div>
 
-<!-- Informações Técnicas -->
+
 <div style="margin-top: 2rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border);">
     <h4>🛠️ Informações Técnicas do Dashboard:</h4>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; font-size: 0.875rem; color: var(--text-muted);">
