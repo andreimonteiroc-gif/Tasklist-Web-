@@ -89,6 +89,25 @@ class UserAuthenticationTestCase(TestCase):
         })
         self.assertTrue(User.objects.filter(email='newuser@example.com').exists())
 
+    def test_user_register_password_mismatch_prioritizes_password_error(self):
+        """Com senha divergente, deve mostrar erro de senha sem priorizar email duplicado."""
+        User.objects.create_user(
+            username='existinguser',
+            email='existing@example.com',
+            password='pass12345'
+        )
+
+        response = self.client.post(reverse('tasks:user_register'), {
+            'name': 'Pessoa Teste',
+            'email': 'existing@example.com',
+            'password': 'abcdef123',
+            'password_confirm': 'xyz987654'
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Senhas não coincidem.')
+        self.assertNotContains(response, 'Este email já está cadastrado.')
+
 
 class TaskCRUDTestCase(TestCase):
     """Testes para CRUD de tarefas."""

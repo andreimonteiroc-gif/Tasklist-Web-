@@ -1,8 +1,34 @@
 {% extends 'tasks/base.html' %}
 
-{% block title %}Dashboard - tasklistMCZ Django{% endblock %}
+{% block title %}tasklistMCZ - Gerenciador de Tarefas{% endblock %}
 
 {% block content %}
+{% if not request.user.is_authenticated %}
+<div id="welcomeScreen">
+    <div class="login">
+        <h2>🎯 Bem-vindo ao tasklistMCZ</h2>
+        <p class="text-center mb-2">Organize suas tarefas de forma simples e eficiente</p>
+
+        <div class="stats" style="margin: 2rem 0;">
+            <div class="stat-card">
+                <div class="stat-number">📋</div>
+                <div class="stat-label">Organize Tarefas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">⏰</div>
+                <div class="stat-label">Defina Prioridades</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">✅</div>
+                <div class="stat-label">Acompanhe Progresso</div>
+            </div>
+        </div>
+
+        <a href="{% url 'tasks:user_login' %}" class="btn home-cta home-cta-primary">Fazer Login</a>
+        <a href="{% url 'tasks:user_register' %}" class="btn home-cta home-cta-secondary">Criar Conta</a>
+    </div>
+</div>
+{% else %}
 <div class="stats">
     <div class="stat-card">
         <div class="stat-number">{{ stats.total }}</div>
@@ -18,7 +44,7 @@
     </div>
 </div>
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;">
     <h2>📋 Minhas Tarefas</h2>
     <div>
         <a href="{% url 'tasks:task_new' %}" class="btn">➕ Nova Tarefa</a>
@@ -50,12 +76,12 @@
                 {% elif task.priority == 'medium' %}🟡 Média
                 {% else %}🟢 Baixa{% endif %}
             </span>
-            <div>
-                <a href="{% url 'tasks:task_complete' task.id %}" class="btn {% if task.completed %}btn-secondary{% endif %}">
+            <div class="task-actions">
+                <a href="{% url 'tasks:task_complete' task.id %}" class="btn-small {% if task.completed %}btn-secondary{% endif %}">
                     {% if task.completed %}↶ Reabrir{% else %}✅ Concluir{% endif %}
                 </a>
-                <a href="{% url 'tasks:task_edit' task.id %}" class="btn btn-secondary">✏️ Editar</a>
-                <a href="{% url 'tasks:task_delete' task.id %}" class="btn btn-danger">🗑️ Excluir</a>
+                <a href="{% url 'tasks:task_edit' task.id %}" class="btn-small btn-secondary">✏️ Editar</a>
+                <a href="{% url 'tasks:task_delete' task.id %}" class="btn-small btn-secondary">🗑️ Excluir</a>
             </div>
         </div>
     </div>
@@ -72,5 +98,6 @@
     </div>
 {% endif %}
 
+{% endif %}
 
 {% endblock %}

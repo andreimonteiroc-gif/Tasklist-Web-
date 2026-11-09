@@ -1,67 +1,109 @@
+{% load static %}
 <!doctype html>
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}tasklistMCZ - Backend Django{% endblock %}</title>
+    <title>{% block title %}tasklistMCZ{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}?v=20260618-1">
     <style>
-        :root {
-          --bg: #f8fafc; --card: #ffffff; --accent: #4f46e5; --accent-hover: #4338ca;
-          --text: #0f172a; --text-muted: #64748b; --border: #e2e8f0;
-          --success: #10b981; --error: #ef4444; --warning: #f59e0b;
+        .page-shell {
+            padding-top: 1rem;
         }
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-        header { background: linear-gradient(135deg, var(--accent), #6d28d9); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        header h1 { margin: 0; font-size: 1.75rem; font-weight: 700; text-align: center; }
-        nav.main-nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
-        nav .nav-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        nav .nav-link { color: var(--accent); text-decoration: none; font-weight: 500; margin: 0 1rem; transition: color 0.2s; }
-        nav .nav-link:hover { color: var(--accent-hover); }
-        main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
-        .stat-number { font-size: 2rem; font-weight: 700; color: var(--accent); margin: 0; }
-        .stat-label { color: var(--text-muted); font-size: 0.875rem; margin: 0.5rem 0 0; }
-        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem; margin: 0.5rem 0; background: var(--card); border-radius: 8px; border: 1px solid var(--border); }
-        .task-content { flex: 1; }
-        .task-title { font-weight: 600; margin: 0 0 0.25rem; }
-        .task-description { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
-        .task-priority { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500; margin-right: 0.5rem; }
-        .priority-high { background: #fecaca; color: #991b1b; }
-        .priority-medium { background: #fed7aa; color: #9a3412; }
-        .priority-low { background: #dcfce7; color: #166534; }
-        .btn { background: var(--accent); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.875rem; margin: 0.25rem; cursor: pointer; }
-        .btn:hover { background: var(--accent-hover); }
-        .btn-danger { background: var(--error); }
-        .btn-secondary { background: var(--border); color: var(--text); }
-        .form-group { margin: 1rem 0; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; }
-        .messages { margin-bottom: 1rem; }
-        .alert { padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; }
-        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-        .alert-error { background: #fecaca; color: #991b1b; border: 1px solid #fca5a5; }
-        footer { background: var(--card); border-top: 1px solid var(--border); padding: 2rem; margin-top: 3rem; text-align: center; }
-        footer p { margin: 0.5rem 0; color: var(--text-muted); font-size: 0.875rem; }
-        footer a { color: var(--accent); text-decoration: none; }
+        .messages {
+            max-width: 880px;
+            margin: 0 auto 1.5rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border);
+            background: var(--card);
+        }
+        .alert-success {
+            background: #ecfdf5;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+        .alert-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+        .alert-warning {
+            background: #fffbeb;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+        .task-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        .task-actions .btn,
+        .task-actions .btn-small {
+            width: auto;
+            margin: 0;
+        }
+        .surface-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+        .helper-panel {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            border: 1px solid var(--border);
+        }
+        .helper-panel h4 {
+            margin: 0 0 0.75rem;
+        }
+        .helper-panel p,
+        .helper-panel ul {
+            margin: 0.35rem 0;
+        }
+        .helper-panel ul {
+            padding-left: 1.1rem;
+        }
+        @media (max-width: 768px) {
+            .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .task-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>📝 tasklistMCZ Django</h1>
+        <a href="{% url 'tasks:task_list' %}" class="brand-link" aria-label="Ir para a pagina inicial">
+            <img src="{% static 'assets/logo-tasklistmcz.svg' %}" alt="TaskListMCZ - Gerenciamento e Foco" class="brand-logo">
+        </a>
     </header>
     
     <nav class="main-nav">
         <div class="nav-content">
             <div class="nav-links">
-                <a href="{% url 'tasks:task_list' %}" class="nav-link">Dashboard</a>
-                <a href="{% url 'tasks:task_new' %}" class="nav-link">Nova Tarefa</a>
-                <a href="{% url 'tasks:dashboard' %}" class="nav-link">Estatísticas</a>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'tasks:task_list' %}" class="nav-link">Dashboard</a>
+                    <a href="{% url 'tasks:dashboard' %}" class="nav-link">Estatísticas</a>
+                    <a href="{% url 'tasks:task_new' %}" class="nav-link">Nova Tarefa</a>
+                {% endif %}
             </div>
             <div class="user-info">
-                {% if request.session.user_name %}
-                    Olá, {{ request.session.user_name }}! 
+                {% if request.user.is_authenticated %}
+                    Olá, {{ request.user.first_name|default:request.user.username }}!
                     <a href="{% url 'tasks:user_logout' %}" class="nav-link">Sair</a>
                 {% else %}
                     <a href="{% url 'tasks:user_login' %}" class="nav-link">Login</a>
@@ -71,7 +113,7 @@
         </div>
     </nav>
 
-    <main>
+    <main class="page-shell">
        
         {% if messages %}
             <div class="messages">
@@ -89,8 +131,8 @@
 
     <footer>
         <div class="footer-content">
-            <p>&copy; 2025 tasklistMCZ Django - Backend Completo</p>
-            <p>HTML5 Semântico + Django Framework + URLs Amigáveis</p>
+            <p>&copy; 2025 tasklistMCZ App - Gerenciador de Tarefas</p>
+            <p>Versão 1.0 | Interface alinhada entre protótipo e Django</p>
             <div class="footer-links">
                 <a href="{% url 'tasks:task_list' %}">Início</a> | 
                 <a href="{% url 'tasks:dashboard' %}">Dashboard</a> | 

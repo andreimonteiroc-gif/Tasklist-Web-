@@ -7,6 +7,12 @@ let authToken = null;
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
     loadUserSession();
+
+    // Se abriu login.html#register, mostra o form de cadastro direto.
+    if (window.location.pathname.endsWith('login.html') && window.location.hash === '#register') {
+        showRegisterForm();
+    }
+
     if (currentUser) {
         loadTasks();
     }
@@ -19,8 +25,7 @@ function showLogin() {
 }
 
 function showRegister() {
-    window.location.href = 'login.html';
-    setTimeout(() => showRegisterForm(), 100);
+    window.location.href = 'login.html#register';
 }
 
 function showLoginForm() {

@@ -1,35 +1,19 @@
-"""
-Views para gerenciamento de tarefas e autenticação de usuários.
-
-Este módulo contém as views principal da aplicação Tasklist, incluindo:
-- Autenticação (login, registro, logout)
-- CRUD de tarefas (criar, listar, editar, deletar)
-- Gestão de perfil do usuário
-- Dashboard com estatísticas
-- Busca de tarefas
-"""
-
-from django.shortcuts import render, redirect, get_object_or_404
+﻿from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse
 from datetime import datetime
 from .models import Task, UserProfile
-from .middleware import task_owner_required
 from django.db.models import Q
-import logging
-
-logger = logging.getLogger(__name__)
-
 
 
 MOCK_TASKS = [
     {
         'id': 1,
-        'title': 'Bem-vindo ao Tasklist Django! 🎉',
-        'description': 'Esta é uma tarefa de exemplo criada no backend Django.',
+        'title': 'Bem-vindo ao Tasklist Django! ðŸŽ‰',
+        'description': 'Esta Ã© uma tarefa de exemplo criada no backend Django.',
         'priority': 'high',
         'completed': False,
         'created_at': '2025-10-24T10:00:00Z',
@@ -55,8 +39,8 @@ MOCK_TASKS = [
     },
     {
         'id': 4,
-        'title': 'Validação de formulários',
-        'description': 'Implementar validações server-side para todos os formulários.',
+        'title': 'ValidaÃ§Ã£o de formulÃ¡rios',
+        'description': 'Implementar validaÃ§Ãµes server-side para todos os formulÃ¡rios.',
         'priority': 'high',
         'completed': False,
         'created_at': '2025-10-24T14:20:00Z',
@@ -64,8 +48,8 @@ MOCK_TASKS = [
     },
     {
         'id': 5,
-        'title': 'Rotas amigáveis configuradas',
-        'description': 'URLs semânticas como /tasks/edit/5/ funcionando.',
+        'title': 'Rotas amigÃ¡veis configuradas',
+        'description': 'URLs semÃ¢nticas como /tasks/edit/5/ funcionando.',
         'priority': 'low',
         'completed': True,
         'created_at': '2025-10-24T08:45:00Z',
@@ -84,28 +68,13 @@ MOCK_USERS = [
     {
         'id': 2,
         'username': 'user',
-        'email': 'user@tasklist.com', 
+        'email': 'user@tasklist.com',
         'password': 'user123',
-        'name': 'Usuário Teste'
+        'name': 'UsuÃ¡rio Teste'
     }
 ]
 
 def task_list(request):
-    """
-    Lista todas as tarefas do usuário autenticado com filtros.
-    
-    Filtros disponíveis via GET:
-    - filter=all: todas as tarefas (padrão)
-    - filter=completed: tarefas concluídas
-    - filter=pending: tarefas pendentes
-    - filter=high: tarefas de alta prioridade
-    
-    Args:
-        request: HTTPRequest com usuário autenticado
-        
-    Returns:
-        HttpResponse: página com lista de tarefas e estatísticas
-    """
     if request.user.is_authenticated:
         tasks_queryset = Task.objects.filter(user=request.user)
         filter_type = request.GET.get('filter', 'all')
@@ -115,7 +84,7 @@ def task_list(request):
             tasks_queryset = tasks_queryset.filter(completed=False)
         elif filter_type == 'high':
             tasks_queryset = tasks_queryset.filter(priority='high')
-        
+
         tasks = tasks_queryset
         all_tasks = Task.objects.filter(user=request.user)
         total_tasks = all_tasks.count()
@@ -133,7 +102,7 @@ def task_list(request):
         total_tasks = len(MOCK_TASKS)
         completed_tasks = len([t for t in MOCK_TASKS if t['completed']])
         pending_tasks = total_tasks - completed_tasks
-    
+
     context = {
         'tasks': tasks,
         'filter_type': filter_type,
@@ -146,23 +115,13 @@ def task_list(request):
     return render(request, 'tasks/task_list.html', context)
 
 def user_login(request):
-    """
-    Autentica o usuário usando email e senha.
-    
-    POST:
-        - email: email do usuário
-        - password: senha do usuário
-        
-    Returns:
-        HttpResponse: redireciona para task_list se sucesso, mantém em login.html se erro
-    """
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
         try:
             user = User.objects.get(email=email)
             user_auth = authenticate(request, username=user.username, password=password)
-            
+
             if user_auth:
                 login(request, user_auth)
                 messages.success(request, f'Bem-vindo, {user.first_name or user.username}!')
@@ -170,46 +129,33 @@ def user_login(request):
             else:
                 messages.error(request, 'Senha incorreta!')
         except User.DoesNotExist:
-            messages.error(request, 'Email não encontrado!')
-    
+            messages.error(request, 'Email nÃ£o encontrado!')
+
     return render(request, 'tasks/login.html')
 
 def user_register(request):
-    """
-    Registra um novo usuário na aplicação.
-    
-    Validações:
-    - Nome com mínimo 2 caracteres
-    - Email válido e único
-    - Senha com mínimo 6 caracteres
-    - Confirmação de senha deve bater
-    
-    POST:
-        - name: nome completo do usuário
-        - email: email do usuário
-        - password: senha
-        - password_confirm: confirmação de senha
-        
-    Returns:
-        HttpResponse: redireciona para login se sucesso, mantém em register.html se erro
-    """
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
         password = request.POST.get('password')
         password_confirm = request.POST.get('password_confirm')
         errors = []
+
         if not name or len(name.strip()) < 2:
             errors.append('Nome deve ter pelo menos 2 caracteres.')
         if not email or '@' not in email:
-            errors.append('Email inválido.')
+            errors.append('Email invÃ¡lido.')
         if not password or len(password) < 6:
             errors.append('Senha deve ter pelo menos 6 caracteres.')
         if password != password_confirm:
             errors.append('Senhas não coincidem.')
-        if User.objects.filter(email=email).exists():
-            errors.append('Este email já está cadastrado.')
+
         
+            errors.append('Este email já está cadastrado.')
+
+        if 'Senhas não coincidem.' in errors and 'Este email já está cadastrado.' in errors:
+            errors = [error for error in errors if error != 'Este email já está cadastrado.']
+
         if errors:
             for error in errors:
                 messages.error(request, error)
@@ -229,11 +175,11 @@ def user_register(request):
                     user=user,
                     full_name=name
                 )
-                messages.success(request, 'Conta criada com sucesso! Faça login.')
+                messages.success(request, 'Conta criada com sucesso! FaÃ§a login.')
                 return redirect('tasks:user_login')
             except Exception as e:
                 messages.error(request, f'Erro ao criar conta: {str(e)}')
-    
+
     return render(request, 'tasks/register.html')
 
 def user_logout(request):
@@ -248,7 +194,7 @@ def task_new(request):
         description = request.POST.get('description')
         priority = request.POST.get('priority', 'medium')
         if not title or len(title.strip()) < 3:
-            messages.error(request, 'Título deve ter pelo menos 3 caracteres.')
+            messages.error(request, 'TÃ­tulo deve ter pelo menos 3 caracteres.')
         else:
             try:
                 task = Task.objects.create(
@@ -261,36 +207,19 @@ def task_new(request):
                 return redirect('tasks:task_list')
             except Exception as e:
                 messages.error(request, f'Erro ao criar tarefa: {str(e)}')
-    
+
     return render(request, 'tasks/task_form.html', {'action': 'Criar'})
 
 @login_required
 def task_edit(request, task_id):
-    """
-    Edita uma tarefa existente.
-    
-    Apenas o proprietário da tarefa pode editá-la.
-    
-    POST:
-        - title: novo título
-        - description: nova descrição
-        - priority: nova prioridade
-        
-    Returns:
-        HttpResponse: redireciona para task_list se sucesso, 403 se não autorizado
-    """
-    try:
-        task = get_object_or_404(Task, id=task_id, user=request.user)
-    except:
-        messages.error(request, 'Tarefa não encontrada.')
-        return redirect('tasks:task_list')
-    
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+
     if request.method == 'POST':
         title = request.POST.get('title')
         description = request.POST.get('description')
         priority = request.POST.get('priority')
         if not title or len(title.strip()) < 3:
-            messages.error(request, 'Título deve ter pelo menos 3 caracteres.')
+            messages.error(request, 'TÃ­tulo deve ter pelo menos 3 caracteres.')
         else:
             try:
                 task.title = title.strip()
@@ -301,98 +230,56 @@ def task_edit(request, task_id):
                 return redirect('tasks:task_list')
             except Exception as e:
                 messages.error(request, f'Erro ao atualizar tarefa: {str(e)}')
-    
+
     return render(request, 'tasks/task_form.html', {'task': task, 'action': 'Editar'})
 
 @login_required
 def task_delete(request, task_id):
-    """
-    Deleta uma tarefa existente.
-    
-    Apenas o proprietário da tarefa pode deletá-la.
-    Requer confirmação via POST.
-    
-    Args:
-        request: HTTPRequest com usuário autenticado
-        task_id: ID da tarefa a ser deletada
-        
-    Returns:
-        HttpResponse: redireciona para task_list após deleção confirmada
-    """
-    try:
-        task = get_object_or_404(Task, id=task_id, user=request.user)
-    except:
-        messages.error(request, 'Tarefa não encontrada.')
-        return redirect('tasks:task_list')
-    
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+
     if request.method == 'POST':
         try:
             task_title = task.title
             task.delete()
-            messages.success(request, f'Tarefa "{task_title}" excluída com sucesso!')
+            messages.success(request, f'Tarefa "{task_title}" excluÃ­da com sucesso!')
             return redirect('tasks:task_list')
         except Exception as e:
             messages.error(request, f'Erro ao excluir tarefa: {str(e)}')
-    
+
     return render(request, 'tasks/task_confirm_delete.html', {'task': task})
 
 @login_required
 def task_complete(request, task_id):
-    """
-    Alterna o status de conclusão de uma tarefa.
-    
-    Se a tarefa estiver pendente, marca como concluída.
-    Se estiver concluída, marca como pendente.
-    
-    Args:
-        request: HTTPRequest com usuário autenticado
-        task_id: ID da tarefa
-        
-    Returns:
-        HttpResponse: redireciona para task_list
-    """
     task = get_object_or_404(Task, id=task_id, user=request.user)
     try:
         task.completed = not task.completed
         task.save()
-        status = 'concluída' if task.completed else 'reaberta'
+        status = 'concluÃ­da' if task.completed else 'reaberta'
         messages.success(request, f'Tarefa "{task.title}" {status}!')
     except Exception as e:
         messages.error(request, f'Erro ao atualizar tarefa: {str(e)}')
-    
+
     return redirect('tasks:task_list')
 
 @login_required
 def dashboard(request):
-    """
-    Exibe dashboard com estatísticas de tarefas do usuário.
-    
-    Mostra:
-    - Total de tarefas (concluídas, pendentes)
-    - Taxa de conclusão (%)
-    - Distribuição por prioridade
-    - Tarefas mais recentes
-    
-    Returns:
-        HttpResponse: página do dashboard com contexto de estatísticas
-    """
-    # Estatísticas avançadas do banco de dados
+
     all_tasks = Task.objects.filter(user=request.user)
     total_tasks = all_tasks.count()
     completed_tasks = all_tasks.filter(completed=True).count()
     pending_tasks = total_tasks - completed_tasks
     high_priority = all_tasks.filter(priority='high').count()
-    
-    # Tarefas por prioridade
+
+
     priority_stats = {
         'high': all_tasks.filter(priority='high').count(),
         'medium': all_tasks.filter(priority='medium').count(),
         'low': all_tasks.filter(priority='low').count(),
     }
-    
-    # Tarefas mais recentes
+
+
     recent_tasks = all_tasks.order_by('-created_at')[:3]
-    
+
     context = {
         'stats': {
             'total': total_tasks,
@@ -409,21 +296,8 @@ def dashboard(request):
 def home(request):
     return redirect('tasks:task_list')
 
-@login_required  
+@login_required
 def profile(request):
-    """
-    Exibe e permite edição do perfil do usuário.
-    
-    GET:
-        - Mostra dados do perfil do usuário
-        
-    POST:
-        - full_name: novo nome completo
-        - Atualiza User e UserProfile
-        
-    Returns:
-        HttpResponse: página de perfil com dados do usuário
-    """
     try:
         user_profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
@@ -431,7 +305,7 @@ def profile(request):
             user=request.user,
             full_name=f"{request.user.first_name} {request.user.last_name}".strip()
         )
-    
+
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
         if full_name and len(full_name.strip()) >= 2:
@@ -452,15 +326,6 @@ def profile(request):
 
 @login_required
 def search(request):
-    """
-    Busca tarefas do usuário por título ou descrição.
-    
-    GET:
-        - q: string de busca (case-insensitive)
-        
-    Returns:
-        HttpResponse: página com tarefas que match a query
-    """
     query = request.GET.get('q', '').strip()
     tasks = []
     if query:
@@ -475,3 +340,75 @@ def search(request):
         'total_results': tasks.count() if query else 0
     }
     return render(request, 'tasks/search.html', context)
+
+
+@login_required
+def app_settings(request):
+    """Tela de configuracoes do aplicativo com persistencia em sessao."""
+    settings_session_key = 'tasklist_app_settings'
+    default_settings = {
+        'default_priority': 'medium',
+        'email_notifications': True,
+        'compact_mode': False,
+    }
+
+    stored_settings = request.session.get(settings_session_key, {})
+    app_settings_data = {**default_settings, **stored_settings}
+
+    if request.method == 'POST':
+        selected_priority = request.POST.get('default_priority', 'medium')
+        allowed_priorities = {'low', 'medium', 'high'}
+
+        if selected_priority not in allowed_priorities:
+            messages.error(request, 'Prioridade padrao invalida.')
+        else:
+            app_settings_data = {
+                'default_priority': selected_priority,
+                'email_notifications': request.POST.get('email_notifications') == 'on',
+                'compact_mode': request.POST.get('compact_mode') == 'on',
+            }
+            request.session[settings_session_key] = app_settings_data
+            request.session.modified = True
+            messages.success(request, 'Configuracoes salvas com sucesso!')
+            return redirect('tasks:app_settings')
+
+    context = {
+        'app_settings': app_settings_data,
+    }
+    return render(request, 'tasks/settings.html', context)
+
+
+@login_required
+def app_settings(request):
+    """Tela de configuracoes do aplicativo com persistencia em sessao."""
+    settings_session_key = 'tasklist_app_settings'
+    default_settings = {
+        'default_priority': 'medium',
+        'email_notifications': True,
+        'compact_mode': False,
+    }
+
+    stored_settings = request.session.get(settings_session_key, {})
+    app_settings_data = {**default_settings, **stored_settings}
+
+    if request.method == 'POST':
+        selected_priority = request.POST.get('default_priority', 'medium')
+        allowed_priorities = {'low', 'medium', 'high'}
+
+        if selected_priority not in allowed_priorities:
+            messages.error(request, 'Prioridade padrao invalida.')
+        else:
+            app_settings_data = {
+                'default_priority': selected_priority,
+                'email_notifications': request.POST.get('email_notifications') == 'on',
+                'compact_mode': request.POST.get('compact_mode') == 'on',
+            }
+            request.session[settings_session_key] = app_settings_data
+            request.session.modified = True
+            messages.success(request, 'Configuracoes salvas com sucesso!')
+            return redirect('tasks:app_settings')
+
+    context = {
+        'app_settings': app_settings_data,
+    }
+    return render(request, 'tasks/settings.html', context)

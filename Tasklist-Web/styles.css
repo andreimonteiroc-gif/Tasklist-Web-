@@ -313,6 +313,37 @@ a:hover {
   margin: 0.5rem 0 0;
 }
 
+.home-cta {
+  display: block;
+  text-align: center;
+  margin-top: 0.75rem;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.home-cta-primary {
+  background: linear-gradient(135deg, #0ea5a9, #2563eb);
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.22);
+}
+
+.home-cta-primary:hover {
+  background: linear-gradient(135deg, #0f766e, #1d4ed8);
+  color: #ffffff;
+}
+
+.home-cta-secondary {
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  color: #1e3a8a;
+}
+
+.home-cta-secondary:hover {
+  background: #e0e7ff;
+  color: #1e3a8a;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   header {
@@ -338,6 +369,10 @@ a:hover {
   
   .stats {
     grid-template-columns: 1fr;
+  }
+
+  .home-cta {
+    width: 100%;
   }
   
   .login {

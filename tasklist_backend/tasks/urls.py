@@ -19,6 +19,7 @@ urlpatterns = [
     
     # Views tradicionais (opcional, para compatibilidade)
     path('', views.task_list, name='task_list'),
+    path('index.html', views.home, name='index_html_redirect'),
     path('login/', views.user_login, name='user_login'),
     path('register/', views.user_register, name='user_register'),
     path('logout/', views.user_logout, name='user_logout'),
